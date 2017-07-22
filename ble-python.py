@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # taken from https://stackoverflow.com/questions/23788176/finding-bluetooth-low-energy-with-python
 # modifications to parse badge advertisements by Skunkwrx
 
@@ -50,6 +51,19 @@ if not sock:
 sock.bind((dev_id,))
 
 def signal_handler(signal, frame):
+    err = bluez.hci_le_set_scan_enable(
+        sock.fileno(),
+        0,  # 1 - turn on;  0 - turn off
+        0, # 0-filtering disabled, 1-filter out duplicates
+        1000  # timeout
+    )
+    if err < 0:
+        errnum = get_errno()
+        raise Exception("{} {}".format(
+            errno.errorcode[errnum],
+            os.strerror(errnum)
+        ))
+    
     sock.close()
     print("Badge Summary")
     print(badges)
