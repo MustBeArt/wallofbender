@@ -1,6 +1,11 @@
-#!/usr/bin/env python3
+#!./capython3
+# To avoid running as root, we use a copy of the Python3 interpreter.
+# Give it the needed capabilities with this command:
+# sudo setcap 'cap_net_raw,cap_net_admin+eip' capython3
+
+# Portions of the Bluetooth interaction parts of this script have been
 # taken from https://stackoverflow.com/questions/23788176/finding-bluetooth-low-energy-with-python
-# modifications to parse badge advertisements by Skunkwrx
+
 
 import sys
 import os
@@ -29,9 +34,6 @@ BADGE_ADDR = "ad"         # Advertising Address for this badge (assumed constant
 BADGE_CNT = "n"           # number of advertisements received from this address
 
 badges = {}
-
-if not os.geteuid() == 0:
-    sys.exit("script only works as root")
 
 btlib = find_library("bluetooth")
 if not btlib:
