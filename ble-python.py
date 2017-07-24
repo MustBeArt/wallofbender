@@ -35,6 +35,40 @@ BADGE_CNT = "n"           # number of advertisements received from this address
 
 badges = {}
 
+
+def display_database(toFile):
+	timenow = time.time()
+	for _,entry in badges.items():
+		age = timenow - entry[BADGE_TIME]
+		if age < 5.0:
+			ago = "now"
+		else:
+			age = 5 * round(age/5.0)
+			hours = age // (60*60)
+			age -= hours * 60*60
+			minutes = age // 60
+			age -= minutes * 60
+			seconds = age
+			if hours > 0:
+				ago = "%d:%02d:%02d" % (hours,minutes,seconds)
+			elif minutes > 0:
+				ago = "%d:%02d" % (minutes,seconds)
+			else:
+				ago = ":%02d" % (seconds)
+		
+		if len(entry[BADGE_IDS]) == 1:
+			ident = entry[BADGE_ID_NOW]
+		else:
+			ident = "FAKE " + entry[BADGE_ID_NOW]
+			
+		print("<tr><td>%s</td><td>%s</td><td>%s</td></tr>" % (
+			ident,
+			entry[BADGE_NAME_NOW],
+			ago),
+			file=toFile)
+		
+
+
 btlib = find_library("bluetooth")
 if not btlib:
     raise Exception(
@@ -68,7 +102,7 @@ def signal_handler(signal, frame):
     
     sock.close()
     print("Badge Summary")
-    print(badges)
+    display_database(sys.stdout)
     sys.exit(0)
 signal.signal(signal.SIGINT, signal_handler)
 
