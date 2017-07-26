@@ -37,7 +37,7 @@ BADGE_IDS = "ids"     # list of badge IDs seen for this address
 BADGE_TIME = "tm"     # time of most recent advertisement received
 BADGE_ADDR = "ad"     # Advertising Address for this badge (assumed constant)
 BADGE_CNT = "n"       # number of advertisements received from this address
-
+BADGE_ID_FAKED = "faked"    # present if multiple IDs seen for this address
 
 
 class BTAdapter (threading.Thread):
@@ -202,14 +202,72 @@ class NamesDisplay (SmoothScroller):
         
 class BadgeDisplay (SmoothScroller):
     def __init__(self, master):
+        self.master = master
+        self.badges = {}
         SmoothScroller.__init__(self, master, width=912, height=680, x=margin, y=350, wait=30)
         self.lines = deque()
         self.scroll()
+        self.updater()
+    
+    def updater(self):
+        self.update_display()
+        self.master.after(5000, self.updater)        
         
-    def intercept(self, badge):         # temporary test version
-        if badge[BADGE_NAME] not in self.lines:
-            self.lines.append(badge[BADGE_NAME])
+    def format_time_ago(self, t, timenow):
+        age = timenow - t
+        if age < 5.0:
+            return " just now"
+        else:
+            hours = int(age / (60*60))
+            age -= hours * 60*60
+            minutes = int(age / 60)
+            age -= minutes * 60
+            secs = int(age/5) * 5
+            if hours > 0:
+                return "%3d:%02d:%02d" % (hours, minutes, secs)
+            else:
+                return "    %2d:%02d" % (minutes, secs)            
+        
+    def update_display(self):
+        timenow = time.time()
+        self.lines = []
+        for _,b in self.badges.items():
+            if BADGE_ID_FAKED in b:
+                flag = "*"
+            else:
+                flag = " "
+            ident = b[BADGE_ID]
+            name = b[BADGE_NAME]
+            t = self.format_time_ago(b[BADGE_TIME], timenow)
+            line = "%s %s %s %s" % (flag, ident, name, t)
+            self.lines.append(line)
             self.canvas.itemconfigure(self.text, text="\n".join(self.lines))
+            
+    def intercept(self, badge):
+        if badge[BADGE_ADDR] not in self.badges:
+            badge[BADGE_IDS] = [badge[BADGE_ID]]
+            badge[BADGE_NAMES] = [badge[BADGE_NAME]]
+            badge[BADGE_YEARS] = [badge[BADGE_YEAR]]
+            badge[BADGE_CNT] = 1
+            self.badges[badge[BADGE_ADDR]] = badge
+            #self.update_display()
+
+        else:
+            b = self.badges[badge[BADGE_ADDR]]
+            b[BADGE_CNT] += 1
+            b[BADGE_NAME] = badge[BADGE_NAME]
+            b[BADGE_ID] = badge[BADGE_ID]
+            b[BADGE_TIME] = badge[BADGE_TIME]
+            b[BADGE_YEAR] = badge[BADGE_YEAR]
+            if badge[BADGE_NAME] not in b[BADGE_NAMES]:
+                b[BADGE_NAMES].append(badge[BADGE_NAME])
+            if badge[BADGE_ID] not in b[BADGE_IDS]:
+                b[BADGE_IDS].append(badge[BADGE_ID])
+            if badge[BADGE_YEAR] not in b[BADGE_YEARS]:
+                b[BADGE_YEARS].append(badge[BADGE_YEAR])
+            if len(b[BADGE_IDS]) > 1:
+                b[BADGE_ID_FAKED] = True
+            #self.update_display()
 
             
 margin = 50
@@ -289,6 +347,7 @@ def processAdvertisement(cept):
     timestamp,data = cept
     badge = badgeParse(data)
     if badge is not None:
+        badge[BADGE_TIME] = timestamp
         live_display.intercept(badge)
         names_display.intercept(badge)
         badge_display.intercept(badge)
