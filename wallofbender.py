@@ -196,6 +196,9 @@ class NamesDisplay (SmoothScroller):
         
     def intercept(self, badge):
         if badge[BADGE_NAME] not in self.lines:
+            #print("BADGE NAME .%s." % badge[BADGE_NAME])
+            #line = badge[BADGE_NAME] + " "*(8-len(badge[BADGE_NAME]))
+            #print("LINE .%s." % line)
             self.lines.append(badge[BADGE_NAME])
             self.canvas.itemconfigure(self.text, text="\n".join(self.lines))
 
@@ -239,7 +242,8 @@ class BadgeDisplay (SmoothScroller):
             ident = b[BADGE_ID]
             name = b[BADGE_NAME]
             t = self.format_time_ago(b[BADGE_TIME], timenow)
-            line = "%s %s %s %s" % (flag, ident, name, t)
+            #line = "%s %s %s %s" % (flag, ident, name, t)
+            line = flag + " " + ident + " " + name + " "*(8-len(name)) + t
             self.lines.append(line)
             self.canvas.itemconfigure(self.text, text="\n".join(self.lines))
             
