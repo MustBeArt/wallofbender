@@ -85,7 +85,7 @@ advertisement format I chose to filter on.
 ## Results
 
 The log files are found in the
-[logfile archive (.zip)](https://github.com/MustBeArt/wallofbender/logfiles.zip).
+[logfile archive (.zip)](https://github.com/MustBeArt/wallofbender/blob/master/logfiles.zip).
 
 ### Log File Format
 
