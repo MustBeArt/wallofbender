@@ -47,17 +47,41 @@ We used
 [NOOBS](https://www.raspberrypi.org/blog/introducing-noobs/) 2.4.2 to install
 [Raspbian](http://raspbian.org) Jessie on an 8GB SD card.
 
+### Permissions
+
+The Wall of Bender needs networking permissions to operate the Bluetooth
+interface. This could be accomplished by running as `root` but that's a
+bad idea. Instead, we want to grant ourselves the appropriate capabilities.
+But we're a script running under the Python interpreter, so actually we
+needed to grant those capabilities to the interpreter. We didn't want to do
+that for every Python program, so we made a private copy of the interpreter
+and granted the capabilities to that. Like so:
+
+```
+	cp /usr/bin/python3 capython3
+	sudo setcap 'cap_net_raw,cap_net_admin+eip' capython3
+```
+
 ### Dependencies
 
-There were some.
+```
+	sudo apt-get install python3-pil.imagetk
+```
+
+Everything else needed was already included in the NOOBS install of
+Raspbian.
 
 ### Screen Blanking
 
 We turned off screen blanking as suggested on
 [this web page](http://www.geeks3d.com/hacklab/20160108/how-to-disable-the-blank-screen-on-raspberry-pi-raspbian/)
 by adding
+
+```
     [SeatDefaults]
     xserver-command=X -s 0 -dpms
+```
+
 in the file `/etc/lightdm/lightdm.conf `.
 
 ### WiFi
@@ -110,10 +134,10 @@ the raw data in the advertisement.
 ### Timestamp Limitation
 
 I failed to account for the fact that the Raspberry Pi Zero W does not
-include a realtime clock. Since the Wall did not have access the Internet
-(that's a feature when you're deployed at DEFCON in the Wireless Village!)
-it could not set its own clock by NTP, as a Linux host normally would.
-So, all the timestamps are wrong.
+include a realtime clock. Since the Wall did not have access to the Internet
+-- that's a *feature* when you're deployed at DEFCON in the Wireless
+Village! -- it could not set its own clock by NTP, as a Linux host normally
+would. So, all the timestamps are wrong.
 
 
 
