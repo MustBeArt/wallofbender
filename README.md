@@ -62,6 +62,13 @@ and granted the capabilities to that. Like so:
 	sudo setcap 'cap_net_raw,cap_net_admin+eip' capython3
 ```
 
+We then put that private interpreter in the shebang line at the top of
+`wallofbender.py`, so it gets the needed permissions if run like so:
+
+```
+	./wallofbender.py
+```
+
 ### Dependencies
 
 ```
@@ -105,6 +112,22 @@ Some of the other unofficial badges at DEFCON 25 were using a compatible
 BLE protocol and could interact with the Bender badges. Those transmissions
 are not logged by the Wall of Bender, because of the fields within the
 advertisement format I chose to filter on.
+
+### Crash Recovery
+
+The Wall of Bender is designed to clean up after itself when stopped with
+control-C or `kill`, but if it crashes after initializing the Bluetooth
+interface it may leave the interface in an unusable condition. It can
+usually be recovered like so:
+
+```
+	sudo hciconfig hci0 down
+	sudo hciconfig hci0 up
+```
+
+If that doesn't work, a reboot probably will.
+
+We didn't experience any crashes with the final Python script.
 
 ## Results
 
