@@ -84,6 +84,19 @@ advertisement format I chose to filter on.
 
 ## Results
 
+The Wall of Bender received 359,838 badge advertisements during DEFCON 25,
+including a little bit of testing in the hotel room.
+
+214 unique Advertising IDs were seen, which probably (?) means 214 actual
+unique badges. 221 unique 16-bit hardware IDs were seen. The extra 7
+hardware IDs are due to spoofing. Only 209 unique Names were seen; many
+of the names recorded were either the default names or names that had
+been changed to a fixed value by a game attack.
+
+In a number of the received advertisements, the Local Name field was
+replaced with an unknown advertising data type, 0x7c, and a payload of
+0x5f5f5f5f5f5f5c. I don't know the purpose of these packets.
+
 The log files are found in the
 [logfile archive (.zip)](https://github.com/MustBeArt/wallofbender/blob/master/logfiles.zip).
 
