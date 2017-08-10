@@ -162,7 +162,15 @@ include a realtime clock. Since the Wall did not have access to the Internet
 Village! -- it could not set its own clock by NTP, as a Linux host normally
 would. So, all the timestamps are wrong.
 
+## Presentation
 
+We talked about the Bluetooth reverse engineering efforts that went into
+creating the Wall of Bender at the DEFCON Group San Diego meeting on
+August 9, 2017. Here are the slides from that talk in several formats:
+
++ [Keynote (original)](https://github.com/MustBeArt/wallofbender/blob/master/Wall_of_Bender_for_DCGSD.key)
++ [Powerpoint](https://github.com/MustBeArt/wallofbender/blob/master/Wall_of_Bender_for_DCGSD.ppt)
++ [PDF](https://github.com/MustBeArt/wallofbender/blob/master/Wall_of_Bender_for_DCGSD.pdf)
 
 ## Gallery
 
